@@ -1,0 +1,106 @@
+.btn-custom {
+    font-size: 1.6rem;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+    background-color: #ff851b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+}
+
+.btn-custom:hover {
+    background-color: #e67300;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.clickable-row:hover {
+    background-color: #fff2e0; /* soft orange hover */
+}
+
+.profile-card {
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.profile-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #b34700; /* warm brown */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #4a2c00;
+    padding: 6px 12px;
+    background: #fff8f0;
+    border-radius: 8px;
+}
+
+.priority-badge {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    background: #ffb347;
+    color: #4a2c00;
+    font-weight: 600;
+}
+
+.subject-badge {
+    background: #ff851b;
+    color: #fff;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.subject-badge:hover {
+    background: #e67300;
+}
+
+.institute-badge {
+    background: #ffa94d;
+    color: #fff;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.institute-badge:hover {
+    background: #e67e22;
+    color: #fff !important;
+}
+
+.teacher-badge {
+    background: #cc5a00;
+    color: #fff;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.teacher-badge:hover {
+    background: #b34700;
+    color: #fff !important;
+}
+
+/* All options black by default */

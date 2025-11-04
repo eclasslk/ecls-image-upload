@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Force inputs to not use browser auto dark mode */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+    background-color: #ffffff !important;
+    color: #111827 !important; /* Tailwind gray-900 */
+}
+
+@media (prefers-color-scheme: dark) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    textarea {
+        background-color: #1f2937 !important; /* Tailwind gray-800 */
+        color: #f9fafb !important; /* Tailwind gray-100 */
+    }
+}
