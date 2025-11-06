@@ -77,7 +77,7 @@
 {{--                    </div>--}}
 
                 </div>
-                <table id="institutesTable" class="table table-hover table-bordered align-middle">
+                <table id="paperTable" class="table table-hover table-bordered align-middle">
                     <thead class="table-dark">
                     <tr>
                         <th width="5%">ID</th>
@@ -85,8 +85,9 @@
                         <th width="20%">Type</th>
                         <th width="20%">Zone</th>
                         <th width="20%">Subject</th>
-                        <th width="20%">Paper</th>
-                        <th width="15%">Updated At</th>
+                        <th width="20%">School</th>
+                        <th width="20%">Year</th>
+                        <th width="25%">Updated At</th>
                         <th width="10%">Action</th>
                     </tr>
                     </thead>
@@ -94,15 +95,13 @@
                     @foreach($papers as $paper)
                         <tr class="clickable-row" data-href="">
                             <td>{{ $paper->id }}</td>
-                            <td>{{ $paper->name ?? null }}}</td>
-                            <td>{{ $paper->type ?? null }}}</td>
-                            <td>{{ $paper->zone ?? null }}}</td>
-                            <td>{{ $paper->subject ?? null }}}</td>
-                            <td>{{ $paper->paper ?? null }}}</td>
-                            <td>{{ $paper->name ?? null }}}</td>
-
-
-                            <td>{{ $paper->updated_at }}</td>
+                            <td>{{ $paper->name ?? null }}</td>
+                            <td>{{ $paper->type->name ?? null }}</td>
+                            <td>{{ $paper->zone->name ?? null }}</td>
+                            <td>{{ $paper->subject->name ?? null }}</td>
+                            <td>{{ $paper->school->name ?? null }}</td>
+                            <td>{{ $paper->year ?? null }}</td>
+                            <td>{{ $paper->updated_at->format('Y-m-m') }}</td>
                             <td class="text-center">
                                 {{-- Edit --}}
 {{--                                <a href="{{ route('papers.show', $paper->id) }}" class="btn btn-sm btn-primary">--}}
@@ -129,7 +128,8 @@
                         <th>Type</th>
                         <th>Zone</th>
                         <th>Subject</th>
-                        <th>Paper</th>
+                        <th>School</th>
+                        <th>Year</th>
                         <th>Updated At</th>
                         <th>Action</th>
                     </tr>
@@ -139,4 +139,29 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    {{-- DataTables JS --}}
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#paperTable').DataTable({
+                responsive: true,
+                paging: true,
+                info: true,
+                searching: true,
+                ordering: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search papers..."
+                },
+                order: [[0, 'desc']]
+            });
+        });
+    </script>
+
 @endsection

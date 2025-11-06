@@ -20,7 +20,7 @@ return new class extends Migration
         Schema::create('papers', function (Blueprint $table) {
             $table->id();
             $table->year('year');
-            $table->enum('grade',[12,13]);
+            $table->enum('grade', ['12', '13']);
             $table->string('term')->nullable();
             $table->string('syllabus')->nullable();
             $table->integer('question_count')->nullable();

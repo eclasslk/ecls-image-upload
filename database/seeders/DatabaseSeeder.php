@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use domain\Level\Seeders\LevelSeeder;
 use domain\Medium\Seeders\MediumSeeder;
+use domain\Paper\Seeders\PaperSeeder;
 use domain\Province\Seeders\ProvinceSeeder;
 use domain\School\Seeders\SchoolSeeder;
 use domain\Subject\Seeders\SubjectSeeder;
@@ -25,5 +26,6 @@ class DatabaseSeeder extends Seeder
         $this->call(LevelSeeder::class);
         $this->call(SubjectSeeder::class);
         $this->call(MediumSeeder::class);
+        $this->call(PaperSeeder::class);
     }
 }
