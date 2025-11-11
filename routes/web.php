@@ -56,6 +56,11 @@ Route::middleware(['auth', 'role:user'])
     ->name('papers.')
     ->group(function () {
         Route::get('/', [PaperController::class, 'index'])->name('index');
+        Route::get('/create', [PaperController::class, 'create'])->name('create');
+        Route::post('/store', [PaperController::class, 'store'])->name('store');
+        Route::get('/{paper}/show', [PaperController::class, 'show'])->name('show');
+        Route::put('/{paper}/update', [PaperController::class, 'update'])->name('update');
+        Route::delete('/{paper}/delete', [PaperController::class, 'destroy'])->name('destroy');
 
     });
 

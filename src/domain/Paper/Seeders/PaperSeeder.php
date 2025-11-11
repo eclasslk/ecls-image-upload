@@ -3,13 +3,17 @@
 namespace domain\Paper\Seeders;
 
 use App\Models\User;
+use domain\Grade\Models\Grade;
 use domain\Level\Models\Level;
 use domain\Medium\Models\Medium;
 use domain\Paper\Models\Paper;
 use domain\Province\Models\Province;
 use domain\School\Models\School;
 use domain\Subject\Models\Subject;
+use domain\Syllabus\Models\Syllabus;
+use domain\Term\Models\Term;
 use domain\Type\Models\Type;
+use domain\Year\Models\Year;
 use domain\Zone\Models\Zone;
 use Illuminate\Database\Seeder;
 
@@ -22,8 +26,8 @@ class PaperSeeder extends Seeder
             [
                 'year' => 2020,
                 'grade' => '12',
-                'term' => 'TT1',
-                'syllabus' => 'NW',
+                'term' => 'Term Test 1',
+                'syllabus' => 'New Syllabus',
                 'name' => 'test',
                 'file_path' => 'test',
                 'type_id' => 'National',
@@ -38,8 +42,8 @@ class PaperSeeder extends Seeder
             [
                 'year' => 2021,
                 'grade' => '13',
-                'term' => 'TT1',
-                'syllabus' => 'OLD',
+                'term' => 'Term Test 2',
+                'syllabus' => 'Old Syllabus',
                 'name' => 'test 1',
                 'file_path' => 'test 1',
                 'type_id' => 'National',
@@ -56,10 +60,10 @@ class PaperSeeder extends Seeder
 
         foreach ($papers as $paper) {
             Paper::create([
-                'year' => $paper['year'],
-                'grade' => $paper['grade'],
-                'term' => $paper['term'],
-                'syllabus' => $paper['syllabus'],
+                'year_id' => Year::where('year', $paper['year'])->first()->id,
+                'grade_id' => Grade::where('grade', $paper['grade'])->first()->id,
+                'term_id' => Term::where('name', $paper['term'])->first()->id,
+                'syllabus_id' => Syllabus::where('name', $paper['syllabus'])->first()->id,
                 'name' => $paper['name'],
                 'file_path' => $paper['file_path'],
                 'type_id' => Type::where('name', $paper['type_id'])->first()->id,

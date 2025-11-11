@@ -2,15 +2,29 @@
 
 namespace domain\Suffix\Seeders;
 
+use domain\Suffix\Models\SuffixType;
 use Illuminate\Database\Seeder;
 
 class SuffixTypeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+
     public function run(): void
     {
-        //
+        $suffixes = [
+            [
+                'name' => 'inco',
+            ],
+            [
+                'name' => 'ocrf',
+            ],
+            [
+                'name' => 'unid',
+            ],
+
+        ];
+
+        foreach ($suffixes as $suffix) {
+            SuffixType::create($suffix);
+        }
     }
 }

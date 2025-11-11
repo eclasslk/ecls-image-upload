@@ -12,13 +12,42 @@ class ProvinceSeeder extends Seeder
     {
         $types = [
             [
-                'name' => 'Western',
-                'code' => 'WP',
-            ],
-            [
                 'name' => 'Central',
                 'code' => 'CP',
             ],
+            [
+                'name' => 'Eastern',
+                'code' => 'EP',
+            ],
+            [
+                'name' => 'North Central',
+                'code' => 'NC',
+            ],
+            [
+                'name' => 'North Western',
+                'code' => 'NW',
+            ],
+            [
+                'name' => 'Northern',
+                'code' => 'NP',
+            ],
+            [
+                'name' => 'Sabaragamuwa',
+                'code' => 'SG',
+            ],
+            [
+                'name' => 'Southern',
+                'code' => 'SP',
+            ],
+            [
+                'name' => 'Uva',
+                'code' => 'UP',
+            ],
+            [
+                'name' => 'Western',
+                'code' => 'WP',
+            ],
+
 
         ];
 

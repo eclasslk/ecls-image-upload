@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('suffixes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Paper::class, 'paper_id')->constrained('papers')->restrictOnDelete();
-            $table->foreignIdFor(SuffixType::class, 'suffix_type_id')->constrained('suffixes')->restrictOnDelete();
+            $table->foreignIdFor(Paper::class, 'paper_id')->constrained('papers')->cascadeOnDelete();
+            $table->foreignIdFor(SuffixType::class, 'suffix_type_id')->constrained('suffix_types')->cascadeOnDelete();
             $table->timestamps();
         });
     }
