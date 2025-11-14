@@ -137,6 +137,8 @@ class UserController extends Controller
                 'email'    => $user->email,
                 'password' => $plainPassword,
             ]));
+
+
         } catch (\Exception $e) {
             \Log::error('Mail send failed: ' . $e->getMessage());
             // optional: flash warning

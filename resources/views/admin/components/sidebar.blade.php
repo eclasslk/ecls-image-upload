@@ -17,20 +17,12 @@
             </a>
         </li>
 
-        {{-- Subjects --}}
         <li>
-            <a href="{{ route('admin.subjects.index') }}"
-               class="{{ request()->routeIs('admin.subjects.*') ? 'active' : '' }}">
-                <i class="bi bi-book"></i> SUBJECTS
+            <a href="{{ route('admin.schools.index') }}"
+               class="{{ request()->routeIs('admin.schools.*') ? 'active' : '' }}">
+                <i class="bi bi-book"></i> SCHOOLS
             </a>
         </li>
 
-        {{-- Cities --}}
-        <li>
-            <a href="{{ route('admin.cities.index') }}"
-               class="{{ request()->routeIs('admin.cities.*') ? 'active' : '' }}">
-                <i class="bi bi-c-circle"></i> CITIES
-            </a>
-        </li>
     </ul>
 </nav>

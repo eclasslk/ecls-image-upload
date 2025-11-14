@@ -79,7 +79,6 @@ class PaperController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-//        dd($request);
         $data = $request->validate([
             'name' => 'required|string',
             'year_id' => 'required|integer',
@@ -109,33 +108,12 @@ class PaperController extends Controller
         $data['updated_by'] = auth()->id();
         $paper = Paper::create($data);
         $paper->suffixes()->sync($request->suffix_ids ?? []);
-
-        $typeName = $paper->type->name ?? '';
-        $provinceName = $paper->province->name ?? '';
-        $zoneName = $paper->zone->name ?? '';
-        $levelName = $paper->level->name ?? '';
-        $subjectName = $paper->subject->name ?? '';
-        $mediumName = $paper->medium->name ?? '';
-        $year = $paper->year->year;
-        $grade = $paper->grade->grade;
-        $term = $paper->term->name;
-
-        // get suffix names (multiple, comma-separated)
-        $suffixNames = $paper->suffixes->pluck('name')->implode(',');
-
-        // sanitize file name (no spaces, special chars)
-        $fileName = preg_replace(
-            '/[^A-Za-z0-9_\-,]+/',
-            '_',
-            "{$typeName} {$provinceName} {$zoneName} {$levelName} {$subjectName} {$mediumName} {$year} {$grade} {$term} {$suffixNames}"
-        );
+        $fileName = $request->name;
 
         $fileName .= '.' . $request->file('file_path')->getClientOriginalExtension();
 
-        // 4️⃣ Store file in storage/app/public/papers
         $path = $request->file('file_path')->storeAs('papers', $fileName, 'public');
 
-        // 5️⃣ Save file path to Paper
         $paper->update(['file_path' => $path]);
 
         return redirect()->route('papers.index')->with('success', 'Paper created!');
@@ -170,6 +148,7 @@ class PaperController extends Controller
 
     public function update(Request $request, Paper $paper): RedirectResponse
     {
+
         $data = $request->validate([
             'name' => 'required|string',
             'year_id' => 'integer|string',
@@ -186,55 +165,56 @@ class PaperController extends Controller
             'subject_id' => 'required|integer',
             'suffix_ids' => 'required|array',
             'suffix_ids.*' => 'exists:suffixes,id',
-//            'file_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
-        ], [
+        ],[
             'suffix_ids.required' => 'The suffix field is required.',
             'suffix_ids.array' => 'The suffix field must be a valid array.',
             'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
-//            'file_path.required' => 'The file upload is required.',
-
         ]);
 
         $data['updated_by'] = auth()->id();
 
+        $nullableFields = [
+            'grade_id', 'term_id', 'syllabus_id',
+             'type_id', 'province_id', 'zone_id',
+            'school_id'
+        ];
+
+        foreach ($nullableFields as $field) {
+            if (!$request->has($field)) {
+                $data[$field] = null;
+            }
+        }
+
+
         if ($request->hasFile('file_path')) {
-            // Remove old file (optional cleanup)
+
             if ($paper->file_path && \Storage::disk('public')->exists($paper->file_path)) {
                 \Storage::disk('public')->delete($paper->file_path);
             }
 
-            // Build new file name just like in store()
-            $typeName = $paper->type->name ?? '';
-            $provinceName = $paper->province->name ?? '';
-            $zoneName = $paper->zone->name ?? '';
-            $levelName = $paper->level->name ?? '';
-            $subjectName = $paper->subject->name ?? '';
-            $mediumName = $paper->medium->name ?? '';
-            $year = $paper->year->year;
-            $grade = $paper->grade->grade;
-            $term = $paper->term->name;
-
-            // get suffix names (multiple, comma-separated)
-            $suffixNames = collect($request->suffix_ids)
-                ->map(fn($id) => Suffix::find($id)?->name)
-                ->filter()
-                ->implode(',');
-
-            $fileName = preg_replace(
-                '/[^A-Za-z0-9_\-,]+/',
-                '_',
-                "{$typeName} {$provinceName} {$zoneName} {$levelName} {$subjectName} {$mediumName} {$year} {$grade} {$term} {$suffixNames}"
-            );
-
-            $fileName .= '.' . $request->file('file_path')->getClientOriginalExtension();
-
-            // Save new file
+            $fileName = $request->name . '.' . $request->file('file_path')->getClientOriginalExtension();
             $path = $request->file('file_path')->storeAs('papers', $fileName, 'public');
 
-            $data['file_path'] = $path; // include in update
+            $paper->update(['file_path' => $path]);
+
+        } else {
+            if ($paper->file_path) {
+                $oldPath = $paper->file_path;
+
+                $extension = pathinfo($oldPath, PATHINFO_EXTENSION);
+
+                $newPath = 'papers/' . $request->name . '.' . $extension;
+
+                if ($oldPath !== $newPath && \Storage::disk('public')->exists($oldPath)) {
+
+                    \Storage::disk('public')->move($oldPath, $newPath);
+
+                    $paper->update(['file_path' => $newPath]);
+                }
+            }
         }
 
-        // ✅ Update paper and suffixes
+
         $paper->update($data);
         $paper->suffixes()->sync($request->suffix_ids ?? []);
 
@@ -250,4 +230,26 @@ class PaperController extends Controller
         return redirect()->route('papers.index')
             ->with('success', 'Paper deleted successfully.');
     }
+
+    public function checkName(Request $request)
+    {
+        $name = $request->name;
+        $paperId = $request->paper_id;
+
+        $duplicatePaper = Paper::where('name', $name)
+            ->when($paperId, fn($q) => $q->where('id', '!=', $paperId))
+            ->first();
+
+        if ($duplicatePaper) {
+            return response()->json([
+                'exists' => true,
+                'file_path' => $duplicatePaper->file_path,
+                'id' => $duplicatePaper->id
+            ]);
+        }
+
+        return response()->json(['exists' => false]);
+    }
+
+
 }

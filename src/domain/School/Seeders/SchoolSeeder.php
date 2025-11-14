@@ -2,6 +2,7 @@
 
 namespace domain\School\Seeders;
 
+use App\Models\User;
 use domain\Province\Models\Province;
 use domain\School\Models\School;
 use Illuminate\Database\Seeder;
@@ -12,28 +13,23 @@ class SchoolSeeder extends Seeder
     {
         $schools = [
             [
-                'name' => 'Royal College',
-                'city' => 'colombo',
+                'name' => 'Royal C. colombo',
                 'province' => 'Western',
             ],
             [
-                'name' => 'Vishaka College',
-                'city' => 'colombo',
+                'name' => 'Vishaka C. colombo',
                 'province' => 'Western',
             ],
             [
-                'name' => 'Bandaranayake College',
-                'city' => 'gampha',
+                'name' => 'Bandaranayake C. gampaha',
                 'province' => 'Western',
             ],
             [
-                'name' => 'Anuradhapuara College',
-                'city' => 'anuradhapura',
+                'name' => 'Anuradhapuara C. anuradhapura',
                 'province' => 'Central',
             ],
             [
-                'name' => 'Kakirawa College',
-                'city' => 'anuradhapura',
+                'name' => 'Kakirawa C. anuradhapura',
                 'province' => 'Central',
             ],
 
@@ -42,8 +38,8 @@ class SchoolSeeder extends Seeder
         foreach ($schools as $school) {
             School::create([
                 'name' => $school['name'],
-                'city' => $school['city'],
                 'province_id' => Province::where('name', $school['province'])->first()->id,
+                'updated_by' => User::where('name', 'User')->first()->id,
             ]);
         }
     }

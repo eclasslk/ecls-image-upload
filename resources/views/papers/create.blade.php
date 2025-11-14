@@ -214,11 +214,28 @@
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">NAME</label>
                             </div>
-                            <div class="col-md-3">
-                                <input type="text" name="name" id="generated_name" class="form-control"
-                                       value="{{ old('name', $paper->name ?? '') }}" readonly>
+                            <div class="col-md-3 position-relative">
+
+                                <input type="text" name="name" id="generated_name"
+                                       class="form-control"
+                                       value="{{ old('name', $paper->name ?? '') }}"
+                                       readonly>
+
+                                <small class="text-danger d-none" id="name-duplicate-warning">
+                                    Duplicate name exists!
+                                </small>
+
+                                <!-- Popup Window -->
+                                <div id="duplicate-popup" class="popup-duplicate">
+                                    Duplicate found!<br>
+                                    <a href="#" id="duplicate-file-link" target="_blank">View PDF</a>
+                                </div>
+
+
                                 <small class="text-muted">Auto-generated based on fields</small>
                             </div>
+
+
                             <div class="col-md-3">
                                 <label class="form-label fw-bold text-secondary mb-0">UPLOAD</label>
                             </div>
@@ -345,6 +362,9 @@
                 const generated = parts.join('_').replace(/\s+/g, ' ').trim();
 
                 $('#generated_name').val(generated);
+
+                checkDuplicateName(generated);
+
             }
 
             // Add listeners for all relevant dropdowns
@@ -357,6 +377,102 @@
             handleFieldConditions();
             generateName();
         });
+
+        const allSchools = @json($schools);
+
+
+        $('select[name="province_id"]').on('change', function () {
+
+            let selectedProvince = $(this).val();
+            let schoolSelect = $('select[name="school_id"]');
+
+            schoolSelect.empty().append('<option value="">-- School --</option>');
+
+            if (!selectedProvince) return;
+
+            let filteredSchools = allSchools.filter(s => s.province_id == selectedProvince);
+
+            filteredSchools.forEach(school => {
+                schoolSelect.append(
+                    `<option value="${school.id}">${school.name}</option>`
+                );
+            });
+        });
+
+
+        function checkDuplicateName(name) {
+            $.ajax({
+                url: "{{ route('papers.checkName') }}",
+                method: "GET",
+                data: {
+                    name: name,
+                    paper_id: "{{ $paper->id ?? '' }}"
+                },
+                success: function(res) {
+                    const input = $('#generated_name');
+                    const warning = $('#name-duplicate-warning');
+                    const popup = $('#duplicate-popup');
+                    const link = $('#duplicate-file-link');
+
+                    // Remove ALL previous hover/click handlers to avoid conflicts
+                    input.off('mouseenter mouseleave');
+                    popup.off('mouseenter mouseleave');
+                    warning.off('click');
+
+                    if (res.exists) {
+
+                        // Update link
+                        let fileUrl = "/storage/" + res.file_path;
+                        link.attr("href", fileUrl);
+
+                        // UI Updates
+                        input.addClass('duplicate-border');
+                        warning.removeClass('d-none');
+
+                        // Attach NEW listeners (only when duplicate exists)
+                        input.on('mouseenter', function () {
+                            popup.show();
+                        });
+
+                        popup.on('mouseenter', function () {
+                            popup.show();
+                        });
+
+                        input.on('mouseleave', function () {
+                            setTimeout(function () {
+                                if (!input.is(':hover') && !popup.is(':hover')) {
+                                    popup.hide();
+                                }
+                            }, 100);
+                        });
+
+                        popup.on('mouseleave', function () {
+                            setTimeout(function () {
+                                if (!input.is(':hover') && !popup.is(':hover')) {
+                                    popup.hide();
+                                }
+                            }, 100);
+                        });
+
+                        warning.on('click', function () {
+                            popup.show();
+                        });
+
+                    } else {
+                        // Cleanup when NO duplicate found
+                        input.removeClass('duplicate-border');
+                        warning.addClass('d-none');
+
+                        // Ensure popup does NOT show at all
+                        popup.hide();
+                    }
+                }
+            });
+        }
+
+
+
+
     </script>
 @endsection
 

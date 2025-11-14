@@ -2,6 +2,7 @@
 
 use domain\AdminAuth\Controllers\AdminAuthController;
 use domain\Dashboard\Controllers\Admin\DashboardController;
+use domain\Dashboard\Controllers\Admin\SchoolController;
 use domain\Dashboard\Controllers\Admin\UserController;
 use domain\Paper\Controllers\PaperController;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,17 @@ Route::middleware(['auth', 'role:admin'])
                 Route::delete('/{user}/delete', [UserController::class, 'destroy'])->name('destroy');
             });
 
+        Route::prefix('schools')
+            ->name('schools.')
+            ->group(function () {
+                Route::get('/', [SchoolController::class, 'index'])->name('index');
+                Route::get('/create', [SchoolController::class, 'create'])->name('create');
+                Route::post('/store', [SchoolController::class, 'store'])->name('store');
+                Route::get('/{school}/show', [SchoolController::class, 'show'])->name('show');
+                Route::put('/{school}/update', [SchoolController::class, 'update'])->name('update');
+                Route::delete('/{school}/delete', [SchoolController::class, 'destroy'])->name('destroy');
+            });
+
     });
 
 
@@ -64,6 +76,8 @@ Route::middleware(['auth', 'role:user'])
 
     });
 
+Route::get('/papers/check-name', [PaperController::class, 'checkName'])
+    ->name('papers.checkName');
 
 
 

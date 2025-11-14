@@ -29,7 +29,7 @@
             </div>
             <div class="card-body">
                 <div class="row mb-5">
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
                     <select id="filter_type" class="form-select">
                             <option value="">-- All Types --</option>
                             @foreach($types as $type)
@@ -37,7 +37,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
                     <select id="filter_province" class="form-select">
                             <option value="">-- All Provinces --</option>
                             @foreach($provinces as $province)
@@ -53,7 +53,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-4 mb-3">
                     <select id="filter_school" class="form-select">
                             <option value="">-- All Schools --</option>
                             @foreach($schools as $school)
@@ -69,7 +69,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select id="filter_medium" class="form-select">
                             <option value="">-- All Mediums --</option>
                             @foreach($mediums as $medium)
@@ -77,7 +77,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select id="filter_year" class="form-select">
                             <option value="">-- All Years --</option>
                             @foreach($years as $year)
@@ -93,7 +93,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <select id="filter_term" class="form-select">
                             <option value="">-- All Terms --</option>
                             @foreach($terms as $term)
@@ -117,15 +117,20 @@
                     <tr>
                         <th width="5%">ID</th>
                         <th width="20%">Name</th>
-                        <th width="20%">Type</th>
-                        <th width="20%">Zone</th>
-                        <th width="20%">Subject</th>
-                        <th width="20%">School</th>
-                        <th width="20%">Year</th>
-                        <th width="25%">Updated At</th>
+                        <th width="20%">No. of Questions</th>
+                        <th width="20%">Link</th>
+
+                        <th width="25%">Updated On</th>
+                        <th width="25%">Updated By</th>
                         <th width="20%">Action</th>
 
                         {{-- Hidden filterable columns --}}
+                        <th class="d-none">Type</th>
+                        <th class="d-none">Zone</th>
+                        <th class="d-none">Subject</th>
+                        <th class="d-none">School</th>
+                        <th class="d-none">Year</th>
+
                         <th class="d-none">Province</th>
                         <th class="d-none">Medium</th>
                         <th class="d-none">Grade</th>
@@ -138,12 +143,16 @@
                         <tr class="clickable-row" data-href="">
                             <td>{{ $paper->id }}</td>
                             <td>{{ $paper->name ?? null }}</td>
-                            <td>{{ $paper->type->name ?? null }}</td>
-                            <td>{{ $paper->zone->name ?? null }}</td>
-                            <td>{{ $paper->subject->name ?? null }}</td>
-                            <td>{{ $paper->school->name ?? null }}</td>
-                            <td>{{ $paper->year->year ?? null }}</td>
+                            <td>{{ $paper->question_count ?? null }}</td>
+                            <td>
+                                <a href="{{ asset('storage/' . $paper->file_path) }}" target="_blank"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View Paper
+                                </a>
+                            </td>
+
                             <td>{{ $paper->updated_at->format('Y-m-m') }}</td>
+                            <td>{{ $paper->user->name ?? null}}</td>
                             <td class="text-center">
 {{--                                 Edit--}}
                                 <a href="{{ route('papers.show', $paper->id) }}" class="btn btn-sm btn-primary">
@@ -162,6 +171,12 @@
                             </td>
 
                             {{-- Hidden columns --}}
+                           <td class="d-none">{{ $paper->type->name ?? null }}</td>
+                           <td class="d-none">{{ $paper->zone->name ?? null }}</td>
+                           <td class="d-none">{{ $paper->subject->name ?? null }}</td>
+                           <td class="d-none">{{ $paper->school->name ?? null }}</td>
+                           <td class="d-none">{{ $paper->year->year ?? null }}</td>
+
                             <td class="d-none">{{ $paper->province->name ?? '' }}</td>
                             <td class="d-none">{{ $paper->medium->name ?? '' }}</td>
                             <td class="d-none">{{ $paper->grade ?? '' }}</td>
@@ -174,12 +189,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Type</th>
-                        <th>Zone</th>
-                        <th>Subject</th>
-                        <th>School</th>
-                        <th>Year</th>
-                        <th>Updated At</th>
+                        <th>No. Of Questions</th>
+                        <th>Link</th>
+                        <th>Updated On</th>
+                        <th>Updated By</th>
                         <th>Action</th>
                     </tr>
                     </tfoot>
@@ -210,23 +223,23 @@
                     searchPlaceholder: "Search papers..."
                 },
                 columnDefs: [
-                    { targets: [9,10,11,12,13], visible: false } // Hide extra columns but keep searchable
+                    { targets: [7,8,9,10,11,12,13,14,15,16], visible: false } // Hide extra columns but keep searchable
                 ]
             });
 
             // Unified filter binding
             $('#filter_type, #filter_province, #filter_zone, #filter_school, #filter_subject, #filter_medium, #filter_year, #filter_grade, #filter_term, #filter_suffix')
                 .on('change', function () {
-                    table.column(2).search($('#filter_type').val());
-                    table.column(9).search($('#filter_province').val());   // hidden province
-                    table.column(3).search($('#filter_zone').val());
-                    table.column(5).search($('#filter_school').val());
-                    table.column(4).search($('#filter_subject').val());
-                    table.column(10).search($('#filter_medium').val());   // hidden medium
-                    table.column(6).search($('#filter_year').val());
-                    table.column(11).search($('#filter_grade').val());    // hidden grade
-                    table.column(12).search($('#filter_term').val());     // hidden term
-                    table.column(13).search($('#filter_suffix').val());   // hidden suffix
+                    table.column(7).search($('#filter_type').val()); //7
+                    table.column(8).search($('#filter_zone').val()); //
+                    table.column(9).search($('#filter_subject').val());
+                    table.column(10).search($('#filter_school').val());
+                    table.column(11).search($('#filter_year').val());
+                    table.column(12).search($('#filter_province').val());
+                    table.column(13).search($('#filter_medium').val());   // hidden medium
+                    table.column(14).search($('#filter_grade').val());    // hidden grade
+                    table.column(15).search($('#filter_term').val());     // hidden term
+                    table.column(16).search($('#filter_suffix').val());   // hidden suffix
                     table.draw();
                 });
         });

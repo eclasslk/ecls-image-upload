@@ -50,6 +50,12 @@ class Paper extends Model
         return $this->belongsTo(Year::class,'year_id');
     }
 
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'updated_by');
+    }
+
     public function grade(): BelongsTo
     {
         return $this->belongsTo(Grade::class,'grade_id');

@@ -122,3 +122,28 @@
     padding-bottom: 5px;
     margin-bottom: 20px;
 }
+
+.duplicate-border {
+    border: 2px solid #dc3545 !important;
+    background: #ffe6e6;
+}
+
+.popup-duplicate {
+    position: absolute;
+    top: -90px;
+    left: 0;
+    background: #dc3545;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    z-index: 500;
+    width: 230px;
+    display: none;
+}
+
+.popup-duplicate a {
+    color: #fff;
+    font-weight: bold;
+    text-decoration: underline;
+}

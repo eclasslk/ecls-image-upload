@@ -1,18 +1,18 @@
-/* General Layout */
+/* ========= GLOBAL LAYOUT ========= */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #f4f6f9;
+    background-color: #fff8f0;              /* soft warm background */
     height: 100vh;
     display: flex;
     flex-direction: column;
-    color: #333;
+    color: #4a2c00;                         /* warm dark brown text */
     margin: 0;
 }
 
-/* Header */
+/* ========= HEADER ========= */
 .header {
     background-color: #ffffff;
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 2px solid #ffa94d;       /* soft orange border */
     padding: 12px 25px;
     display: flex;
     justify-content: space-between;
@@ -20,8 +20,8 @@ body {
 }
 .header .logo {
     font-size: 1.5rem;
-    font-weight: bold;
-    color: #2b3e50;
+    font-weight: 700;
+    color: #cc5a00;                         /* deep warm orange */
 }
 .header .user-menu {
     display: flex;
@@ -29,72 +29,68 @@ body {
     gap: 15px;
 }
 .header .user-menu .name {
-    font-weight: 500;
+    font-weight: 600;
+    color: #b34700;                         /* warm brown */
 }
 .header .dropdown button {
     border: none;
     background: none;
-    color: #2b3e50;
+    color: #cc5a00;
     font-size: 1rem;
     cursor: pointer;
 }
 .header .dropdown button:hover {
-    color: #007bff;
+    color: #e67300;                         /* darker hover orange */
 }
 
-/* Sidebar */
+/* ========= SIDEBAR ========= */
 .sidebar {
     background-color: #ffffff;
-    border-right: 1px solid #e6e6e6;
+    border-right: 2px solid #ffa94d;
     min-height: calc(100vh - 60px);
     padding-top: 20px;
     width: 250px;
     transition: all 0.3s ease;
     position: fixed;
-    top: 60px; /* height of header */
+    top: 60px;
     left: 0;
     z-index: 1000;
 }
-
-/* Collapsed Sidebar */
 .sidebar.collapsed {
     transform: translateX(-100%);
 }
+
 /* Sidebar links */
 .sidebar ul {
     padding: 0;
     margin: 0;
     list-style: none;
 }
-
 .sidebar ul li a {
     display: block;
-    color: #444;
+    color: #4a2c00;
     padding: 12px 20px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 6px;
     margin: 5px 10px;
     transition: all 0.2s ease;
 }
-
 /* Hover */
 .sidebar ul li a:hover {
-    background-color: #007bff;
+    background-color: #ff851b;
     color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(255, 133, 27, 0.25);
 }
-
 /* Active */
 .sidebar ul li a.active {
-    background-color: #007bff;
+    background-color: #ff851b;
     color: #fff !important;
-    font-weight: 600;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(255, 133, 27, 0.3);
 }
 
-
-/* Content Area */
+/* ========= CONTENT AREA ========= */
 .content {
     margin-left: 250px;
     padding: 25px;
@@ -106,27 +102,28 @@ body {
 .content h1 {
     font-size: 1.8rem;
     font-weight: bold;
+    color: #cc5a00;
     margin-bottom: 15px;
 }
 .content .card {
     background: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* Footer */
+/* ========= FOOTER ========= */
 .footer {
     background-color: #ffffff;
-    border-top: 1px solid #e6e6e6;
+    border-top: 2px solid #ffa94d;
     padding: 10px 25px;
     display: flex;
     justify-content: space-between;
     font-size: 0.9rem;
-    color: #666;
+    color: #4a2c00;
 }
 
-/* Responsive Layout */
+/* ========= RESPONSIVE ========= */
 @media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
@@ -138,13 +135,12 @@ body {
         margin-left: 0;
     }
 }
-/* Red border for invalid input */
-.input-error {
-    border: 2px solid #dc3545 !important;  /* Bootstrap's red */
-    background-color: #fff5f5;             /* light red background */
-}
 
-/* Error message styling */
+/* ========= FORM + ERROR STYLES ========= */
+.input-error {
+    border: 2px solid #dc3545 !important;
+    background-color: #ffe6e6;
+}
 .error-text {
     color: #dc3545;
     font-size: 0.875rem;
@@ -153,3 +149,8 @@ body {
     font-weight: 600;
 }
 
+/* ========= SECTION CARD (your orange themed panels) ========= */
+.section-card {
+    border: 2px solid #ffa94d;
+    border-radius: 12px;
+}
