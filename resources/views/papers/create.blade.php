@@ -59,6 +59,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('province_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md-3">
                                 <select name="zone_id" class="form-select">
@@ -70,6 +73,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('zone_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md-3">
                                 <select name="school_id" class="form-select">
@@ -81,6 +87,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('school_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
@@ -99,6 +108,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('level_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md-3">
                                 <select name="subject_id" class="form-select">
@@ -110,6 +122,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('subject_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md-3">
                                 <select name="medium_id" class="form-select">
@@ -121,6 +136,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('medium_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
@@ -139,6 +157,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('year_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md-3">
                                 <select name="grade_id" class="form-select">
@@ -150,6 +171,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('grade_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md" style="flex: 0 0 12.5%; max-width: 12.5%;">
                                 <select name="term_id" class="form-select">
@@ -161,6 +185,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('term_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md" style="flex: 0 0 12.5%; max-width: 12.5%;">
                                 <select name="syllabus_id" class="form-select">
@@ -172,6 +199,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('syllabus_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
@@ -189,6 +219,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('suffix_ids')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold text-secondary mb-0">NO OF QUESTIONS</label>
@@ -241,6 +274,9 @@
                             </div>
                             <div class="col-md-3">
                                 <input type="file" name="file_path" class="form-control" accept="application/pdf">
+                                @error('file_path')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                                 @if(isset($paper) && $paper->file_path)
                                     <div class="mt-1">
                                         <a href="{{ asset('storage/' . $paper->file_path) }}" target="_blank"
