@@ -28,7 +28,7 @@
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Province <span class="text-danger">*</span></label>
                             <select name="province_id" class="form-select" required>
-                                <option value="">-- Select Level --</option>
+                                <option value="">-- Select Province --</option>
                                 @foreach($provinces as $province)
                                     <option value="{{ $province->id }}"
                                         {{ old('province_id',$school->province_id ?? '') == $province->id ? 'selected' : '' }}>

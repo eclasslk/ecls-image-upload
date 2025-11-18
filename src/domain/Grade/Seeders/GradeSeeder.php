@@ -12,10 +12,10 @@ class GradeSeeder extends Seeder
     {
         $grades = [
             [
-                'grade' => '12',
+                'grade' => 'G12',
             ],
             [
-                'grade' => '13',
+                'grade' => 'G13',
             ],
 
         ];

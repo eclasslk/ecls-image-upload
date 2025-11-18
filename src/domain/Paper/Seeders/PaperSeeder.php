@@ -25,7 +25,7 @@ class PaperSeeder extends Seeder
         $papers = [
             [
                 'year' => 2020,
-                'grade' => '12',
+                'grade' => 'G12',
                 'term' => 'Term Test 1',
                 'syllabus' => 'New Syllabus',
                 'name' => 'test',
@@ -41,7 +41,7 @@ class PaperSeeder extends Seeder
             ],
             [
                 'year' => 2021,
-                'grade' => '13',
+                'grade' => 'G13',
                 'term' => 'Term Test 2',
                 'syllabus' => 'Old Syllabus',
                 'name' => 'test 1',

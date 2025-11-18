@@ -69,7 +69,7 @@ class PaperController extends Controller
             'subjects' => Subject::all(),
             'mediums' => Medium::all(),
             'suffixTypes' => SuffixType::all(),
-            'years' => Year::all(),
+            'years' => Year::orderBy('year', 'desc')->get(),
             'grades' => Grade::all(),
             'terms' => Term::all(),
             'syllabuses' => Syllabus::all(),
@@ -84,7 +84,7 @@ class PaperController extends Controller
             'year_id' => 'required|integer',
             'grade_id' => 'sometimes|required|integer',
             'term_id' => 'sometimes|required|integer',
-            'syllabus_id' => 'required|integer',
+            'syllabus_id' => 'sometimes|required|integer',
             'question_count' => 'required|integer',
             'type_id' => 'required|integer',
             'province_id' => 'sometimes|required|integer',
@@ -93,11 +93,11 @@ class PaperController extends Controller
             'level_id' => 'required|integer',
             'medium_id' => 'required|integer',
             'subject_id' => 'required|integer',
-            'suffix_ids' => 'required|array',
+            'suffix_ids' => 'nullable|array',
             'suffix_ids.*' => 'exists:suffixes,id',
             'file_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
         ], [
-            'suffix_ids.required' => 'The suffix field is required.',
+//            'suffix_ids.required' => 'The suffix field is required.',
             'suffix_ids.array' => 'The suffix field must be a valid array.',
             'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
             'file_path.required' => 'The file upload is required.',
@@ -139,7 +139,7 @@ class PaperController extends Controller
             'mediums' => Medium::all(),
             'suffixTypes' => SuffixType::all(),
             'filePath' => $filePath,
-            'years' => Year::all(),
+            'years' => Year::orderBy('year', 'desc')->get(),
             'grades' => Grade::all(),
             'terms' => Term::all(),
             'syllabuses' => Syllabus::all(),
@@ -154,7 +154,7 @@ class PaperController extends Controller
             'year_id' => 'integer|string',
             'grade_id' => 'sometimes|required|integer',
             'term_id' => 'sometimes|required|integer',
-            'syllabus_id' => 'integer|string',
+            'syllabus_id' => 'sometimes|required|integer',
             'question_count' => 'required|integer',
             'type_id' => 'required|integer',
             'province_id' => 'sometimes|required|integer',
@@ -163,10 +163,10 @@ class PaperController extends Controller
             'level_id' => 'required|integer',
             'medium_id' => 'required|integer',
             'subject_id' => 'required|integer',
-            'suffix_ids' => 'required|array',
+            'suffix_ids' => 'nullable|array',
             'suffix_ids.*' => 'exists:suffixes,id',
         ],[
-            'suffix_ids.required' => 'The suffix field is required.',
+//            'suffix_ids.required' => 'The suffix field is required.',
             'suffix_ids.array' => 'The suffix field must be a valid array.',
             'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
         ]);
@@ -225,6 +225,12 @@ class PaperController extends Controller
 
     public function destroy(Paper $paper): RedirectResponse
     {
+        // Delete file if it exists
+        if ($paper->file_path && Storage::disk('public')->exists($paper->file_path)) {
+            Storage::disk('public')->delete($paper->file_path);
+        }
+
+        // Delete record from DB
         $paper->delete();
 
         return redirect()->route('papers.index')
@@ -233,12 +239,14 @@ class PaperController extends Controller
 
     public function checkName(Request $request)
     {
-        $name = $request->name;
+        $name = $this->normalizeName($request->name);
         $paperId = $request->paper_id;
 
-        $duplicatePaper = Paper::where('name', $name)
-            ->when($paperId, fn($q) => $q->where('id', '!=', $paperId))
-            ->first();
+        $duplicatePaper = Paper::get()->filter(function ($paper) use ($name, $paperId) {
+            if ($paperId && $paper->id == $paperId) return false;
+
+            return $this->normalizeName($paper->name) === $name;
+        })->first();
 
         if ($duplicatePaper) {
             return response()->json([
@@ -250,6 +258,27 @@ class PaperController extends Controller
 
         return response()->json(['exists' => false]);
     }
+
+    /**
+     * Remove ending markers like _inco / _ocrf / _unid / etc.
+     */
+    private function normalizeName($name)
+    {
+        // Convert to array by splitting _
+        $parts = preg_split('/[_ ]+/', trim($name));
+
+        // Unwanted endings
+        $removeList = ['inco', 'ocrf', 'unid'];
+
+        // Remove trailing unwanted tokens
+        while (!empty($parts) && in_array(strtolower(end($parts)), $removeList)) {
+            array_pop($parts);
+        }
+
+        // Join back using underscore (or space if you prefer)
+        return trim(implode('_', $parts));
+    }
+
 
 
 }

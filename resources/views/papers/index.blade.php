@@ -30,7 +30,7 @@
             <div class="card-body">
                 <div class="row mb-5">
                     <div class="col-md-2 mb-3">
-                    <select id="filter_type" class="form-select">
+                        <select id="filter_type" class="form-select">
                             <option value="">-- All Types --</option>
                             @foreach($types as $type)
                                 <option value="{{ $type->name }}">{{ $type->name }}</option>
@@ -38,7 +38,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
-                    <select id="filter_province" class="form-select">
+                        <select id="filter_province" class="form-select">
                             <option value="">-- All Provinces --</option>
                             @foreach($provinces as $province)
                                 <option value="{{ $province->name }}">{{ $province->name }}</option>
@@ -46,7 +46,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
-                    <select id="filter_zone" class="form-select">
+                        <select id="filter_zone" class="form-select">
                             <option value="">-- All Zones --</option>
                             @foreach($zones as $zone)
                                 <option value="{{ $zone->name }}">{{ $zone->name }}</option>
@@ -54,7 +54,7 @@
                         </select>
                     </div>
                     <div class="col-md-4 mb-3">
-                    <select id="filter_school" class="form-select">
+                        <select id="filter_school" class="form-select">
                             <option value="">-- All Schools --</option>
                             @foreach($schools as $school)
                                 <option value="{{ $school->name }}">{{ $school->name }}</option>
@@ -62,7 +62,7 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
-                    <select id="filter_subject" class="form-select">
+                        <select id="filter_subject" class="form-select">
                             <option value="">-- All Subjects --</option>
                             @foreach($subjects as $subject)
                                 <option value="{{ $subject->name }}">{{ $subject->name }}</option>
@@ -116,12 +116,12 @@
                     <thead class="table-dark">
                     <tr>
                         <th width="5%">ID</th>
-                        <th width="20%">Name</th>
-                        <th width="20%">No. of Questions</th>
-                        <th width="20%">Link</th>
+                        <th width="50%">Name</th>
+                        <th width="10%">No. of Questions</th>
+                        <th width="10%">Link</th>
 
-                        <th width="25%">Updated On</th>
-                        <th width="25%">Updated By</th>
+                        <th width="10%">Updated On</th>
+                        <th width="10%">Updated By</th>
                         <th width="20%">Action</th>
 
                         {{-- Hidden filterable columns --}}
@@ -151,16 +151,17 @@
                                 </a>
                             </td>
 
-                            <td>{{ $paper->updated_at->format('Y-m-m') }}</td>
+                            <td>{{ $paper->updated_at->format('Y-m-d') }}</td>
                             <td>{{ $paper->user->name ?? null}}</td>
                             <td class="text-center">
-{{--                                 Edit--}}
+                                {{--                                 Edit--}}
                                 <a href="{{ route('papers.show', $paper->id) }}" class="btn btn-sm btn-primary">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-{{--                                 Delete--}}
-                                <form action="{{ route('papers.destroy', $paper->id) }}" method="POST" style="display:inline-block;"
+                                {{--                                 Delete--}}
+                                <form action="{{ route('papers.destroy', $paper->id) }}" method="POST"
+                                      style="display:inline-block;"
                                       onsubmit="return confirm('Are you sure you want to delete this paper?');">
                                     @csrf
                                     @method('DELETE')
@@ -171,17 +172,21 @@
                             </td>
 
                             {{-- Hidden columns --}}
-                           <td class="d-none">{{ $paper->type->name ?? null }}</td>
-                           <td class="d-none">{{ $paper->zone->name ?? null }}</td>
-                           <td class="d-none">{{ $paper->subject->name ?? null }}</td>
-                           <td class="d-none">{{ $paper->school->name ?? null }}</td>
-                           <td class="d-none">{{ $paper->year->year ?? null }}</td>
+                            <td class="d-none">{{ $paper->type->name ?? null }}</td>
+                            <td class="d-none">{{ $paper->zone->name ?? null }}</td>
+                            <td class="d-none">{{ $paper->subject->name ?? null }}</td>
+                            <td class="d-none">{{ $paper->school->name ?? null }}</td>
+                            <td class="d-none">{{ $paper->year->year ?? null }}</td>
 
                             <td class="d-none">{{ $paper->province->name ?? '' }}</td>
                             <td class="d-none">{{ $paper->medium->name ?? '' }}</td>
-                            <td class="d-none">{{ $paper->grade ?? '' }}</td>
-                            <td class="d-none">{{ $paper->term ?? '' }}</td>
-                            <td class="d-none">{{ $paper->suffix->name ?? '' }}</td>
+                            <td class="d-none">{{ $paper->grade->grade ?? '' }}</td>
+                            <td class="d-none">{{ $paper->term->name ?? '' }}</td>
+                            <td class="d-none">
+                                @foreach($paper->suffixes as $suffix)
+                                    {{ $suffix->name ?? '' }}\
+                                @endforeach
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -223,7 +228,7 @@
                     searchPlaceholder: "Search papers..."
                 },
                 columnDefs: [
-                    { targets: [7,8,9,10,11,12,13,14,15,16], visible: false } // Hide extra columns but keep searchable
+                    {targets: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16], visible: false} // Hide extra columns but keep searchable
                 ]
             });
 

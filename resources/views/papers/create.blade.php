@@ -24,7 +24,7 @@
                     <div class="container-fluid py-3">
 
                         <!-- Row 1: Type -->
-                        <div class="row mb-3 align-items-end border-bottom pb-2">
+                        <div class="row mb-3 border-bottom pb-2">
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">TYPE</label>
                             </div>
@@ -45,7 +45,7 @@
                         </div>
 
                         <!-- Row 2: Source -->
-                        <div class="row mb-3 align-items-end border-bottom pb-2">
+                        <div class="row mb-3 border-bottom pb-2">
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">SOURCE</label>
                             </div>
@@ -94,7 +94,7 @@
                         </div>
 
                         <!-- Row 3: Subject -->
-                        <div class="row mb-3 align-items-end border-bottom pb-2">
+                        <div class="row mb-3 border-bottom pb-2">
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">SUBJECT</label>
                             </div>
@@ -109,7 +109,7 @@
                                     @endforeach
                                 </select>
                                 @error('level_id')
-                                <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger d-block mt-1">{{ $message }}</small>
                                 @enderror
                             </div>
                             <div class="col-md-3">
@@ -123,7 +123,7 @@
                                     @endforeach
                                 </select>
                                 @error('subject_id')
-                                <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger d-block mt-1">{{ $message }}</small>
                                 @enderror
                             </div>
                             <div class="col-md-3">
@@ -137,13 +137,13 @@
                                     @endforeach
                                 </select>
                                 @error('medium_id')
-                                <small class="text-danger">{{ $message }}</small>
+                                <small class="text-danger d-block mt-1">{{ $message }}</small>
                                 @enderror
                             </div>
                         </div>
 
                         <!-- Row 4: Paper -->
-                        <div class="row mb-3 align-items-end border-bottom pb-2">
+                        <div class="row mb-3 border-bottom pb-2">
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">PAPER</label>
                             </div>
@@ -193,7 +193,7 @@
                                 <select name="syllabus_id" class="form-select">
                                     <option value="">-- Syllabus --</option>
                                     @foreach($syllabuses as $syllabus)
-                                        <option value="{{ $syllabus->id }}"
+                                        <option value="{{ $syllabus->id }}" data-code="{{ $syllabus->code }}"
                                             {{ old('syllabus_id',$paper->syllabus_id ?? '') == $syllabus->id ? 'selected' : '' }}>
                                             {{ $syllabus->name }}
                                         </option>
@@ -206,7 +206,7 @@
                         </div>
 
                         <!-- Row 5: Suffix + Question -->
-                        <div class="row mb-3 align-items-end border-bottom pb-2">
+                        <div class="row mb-3 border-bottom pb-2">
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">SUFFIX</label>
                             </div>
@@ -228,18 +228,24 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="input-group">
-                                    <input type="number" name="question_count" class="form-control"
+                                    <input type="number"
+                                           name="question_count"
+                                           id="question_count_input"
+                                           class="form-control"
                                            value="{{ old('question_count', $paper->question_count ?? 50) }}"
-                                           min="1" step="1" inputmode="numeric"
-                                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                    <select class="form-select" onchange="this.previousElementSibling.value = this.value">
+                                           min="1"
+                                           step="1"
+                                           inputmode="numeric">
+
+                                    <select class="form-select" id="question_count_select">
                                         <option value="">Q</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="60">60</option>
+                                        <option value="25" {{ (old('question_count', $paper->question_count ?? 50) == 25) ? 'selected' : '' }}>25</option>
+                                        <option value="50" {{ (old('question_count', $paper->question_count ?? 50) == 50) ? 'selected' : '' }}>50</option>
+                                        <option value="60" {{ (old('question_count', $paper->question_count ?? 50) == 60) ? 'selected' : '' }}>60</option>
                                     </select>
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Row 6: Name + File Upload -->
@@ -247,31 +253,22 @@
                             <div class="col-md-2">
                                 <label class="form-label fw-bold text-secondary mb-0">NAME</label>
                             </div>
-                            <div class="col-md-3 position-relative">
+                            <div class="col-md-6 position-relative">
 
                                 <input type="text" name="name" id="generated_name"
                                        class="form-control"
                                        value="{{ old('name', $paper->name ?? '') }}"
-                                       readonly>
+                                       readonly
+                                       style="background-color: #f0f0f0 !important; color: #333333 !important;">
 
+
+                                <!-- NEW simple duplicate message -->
                                 <small class="text-danger d-none" id="name-duplicate-warning">
-                                    Duplicate name exists!
+                                    Duplicate name found! <a id="duplicate-file-link" href="#" class="text-decoration-underline" target="_blank">View</a>
                                 </small>
 
-                                <!-- Popup Window -->
-                                <div id="duplicate-popup" class="popup-duplicate">
-                                    Duplicate found!<br>
-                                    <a href="#" id="duplicate-file-link" target="_blank">View PDF</a>
-                                </div>
-
-
-                                <small class="text-muted">Auto-generated based on fields</small>
                             </div>
 
-
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold text-secondary mb-0">UPLOAD</label>
-                            </div>
                             <div class="col-md-3">
                                 <input type="file" name="file_path" class="form-control" accept="application/pdf">
                                 @error('file_path')
@@ -324,6 +321,7 @@
                 // Paper selects
                 const $grade = $('select[name="grade_id"]');
                 const $term = $('select[name="term_id"]');
+                const $syllabus = $('select[name="syllabus_id"]');
 
                 // Reset all to enabled
                 $province.add($zone).add($school).add($grade).add($term).prop('disabled', false);
@@ -343,14 +341,24 @@
                     $province.prop('disabled', false);
                     $zone.add($school).prop('disabled', true);
                     $zone.add($school).closest('.col-md-4').css('opacity', 0.5);
+
+                    $zone.add($syllabus).prop('disabled', true);
+                    $zone.add($syllabus).closest('.col-md-4').css('opacity', 0.5);
                 }
                 else if (selectedTypeText === 'Zonal') {
                     $province.add($zone).prop('disabled', false);
                     $school.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5);
+                    $syllabus.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5);
+
+                    // $zone.add($syllabus).prop('disabled', true);
+                    // $zone.add($syllabus).closest('.col-md-4').css('opacity', 0.5);
                 }
                 else if (selectedTypeText === 'School') {
                     $province.add($school).prop('disabled', false);
-                    $zone.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5);
+                    $zone.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5)
+
+                    $zone.add($syllabus).prop('disabled', true);
+                    $zone.add($syllabus).closest('.col-md-4').css('opacity', 0.5);
                 }
 
                 generateName(); // regenerate when conditions change
@@ -372,6 +380,7 @@
 
                 const grade = $('select[name="grade_id"]:enabled option:selected').text().trim();
                 const termCode = $('select[name="term_id"]:enabled option:selected').data('code') || $('select[name="term_id"]:enabled option:selected').text().trim();
+                const syllabusCode = $('select[name="syllabus_id"]:enabled option:selected').data('code') || $('select[name="syllabus_id"]:enabled option:selected').text().trim();
 
                 // Handle multiple suffix selections
                 const suffixes = $('select[name="suffix_ids[]"]').val() || [];
@@ -390,7 +399,7 @@
                 const group3 = [levelCode, subject, mediumCode].filter(Boolean).join(' ');
                 if (group3) parts.push(group3);
 
-                const group4 = [year, grade, termCode].filter(Boolean).join(' ');
+                const group4 = [year, grade, termCode, syllabusCode].filter(Boolean).join(' ');
                 if (group4) parts.push(group4);
 
                 if (suffixNames) parts.push(suffixNames);
@@ -398,6 +407,7 @@
                 const generated = parts.join('_').replace(/\s+/g, ' ').trim();
 
                 $('#generated_name').val(generated);
+
 
                 checkDuplicateName(generated);
 
@@ -435,6 +445,47 @@
             });
         });
 
+        let allZones = @json($zones);
+
+        $('select[name="province_id"]').on('change', function () {
+
+            let selectedProvince = $(this).val();
+            let zoneSelect = $('select[name="zone_id"]');
+
+            zoneSelect.empty().append('<option value="">-- Zone --</option>');
+
+            if (!selectedProvince) return;
+
+            let filteredZones = allZones.filter(z => z.province_id == selectedProvince);
+
+            filteredZones.forEach(zone => {
+                zoneSelect.append(
+                    `<option value="${zone.id}">${zone.name}</option>`
+                );
+            });
+        });
+
+
+        const allSubjects = @json($subjects);
+
+        $('select[name="level_id"]').on('change', function () {
+
+            let selectedLevel = $(this).val();
+            let subjectSelect = $('select[name="subject_id"]');
+
+            subjectSelect.empty().append('<option value="">-- Subject --</option>');
+
+            if (!selectedLevel) return;
+
+            let filteredSubjects = allSubjects.filter(s => s.level_id == selectedLevel);
+
+            filteredSubjects.forEach(subject => {
+                subjectSelect.append(
+                    `<option value="${subject.id}">${subject.name}</option>`
+                );
+            });
+        });
+
 
         function checkDuplicateName(name) {
             $.ajax({
@@ -462,8 +513,8 @@
                         link.attr("href", fileUrl);
 
                         // UI Updates
-                        input.addClass('duplicate-border');
                         warning.removeClass('d-none');
+                        input.addClass('duplicate-border');
 
                         // Attach NEW listeners (only when duplicate exists)
                         input.on('mouseenter', function () {
@@ -496,8 +547,8 @@
 
                     } else {
                         // Cleanup when NO duplicate found
-                        input.removeClass('duplicate-border');
                         warning.addClass('d-none');
+                        input.removeClass('duplicate-border');
 
                         // Ensure popup does NOT show at all
                         popup.hide();
@@ -507,6 +558,24 @@
         }
 
 
+        // When select changes -> update input
+        $('#question_count_select').on('change', function () {
+            let val = $(this).val();
+            $('#question_count_input').val(val);
+        });
+
+        // When input changes -> update select
+        $('#question_count_input').on('input', function () {
+            let val = $(this).val();
+            let select = $('#question_count_select');
+
+            // Find matching option
+            if (select.find(`option[value="${val}"]`).length > 0) {
+                select.val(val);  // match found -> update dropdown
+            } else {
+                select.val('');   // no match -> reset dropdown
+            }
+        });
 
 
     </script>
