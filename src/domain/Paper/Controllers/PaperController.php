@@ -38,6 +38,7 @@ class PaperController extends Controller
         $grades = Grade::all();
         $terms = Term::all();
         $syllabuses = Syllabus::all();
+        $levels = Level::all();
 
         return view(
             'papers.index',
@@ -53,7 +54,8 @@ class PaperController extends Controller
                 'years',
                 'terms',
                 'grades',
-                'syllabuses'
+                'syllabuses',
+                'levels',
             )
         );
     }
@@ -84,7 +86,7 @@ class PaperController extends Controller
             'year_id' => 'required|integer',
             'grade_id' => 'sometimes|required|integer',
             'term_id' => 'sometimes|required|integer',
-            'syllabus_id' => 'sometimes|required|integer',
+            'syllabus_id' => 'nullable|integer',
             'question_count' => 'required|integer',
             'type_id' => 'required|integer',
             'province_id' => 'sometimes|required|integer',
@@ -94,12 +96,12 @@ class PaperController extends Controller
             'medium_id' => 'required|integer',
             'subject_id' => 'required|integer',
             'suffix_ids' => 'nullable|array',
-            'suffix_ids.*' => 'exists:suffixes,id',
+//            'suffix_ids.*' => 'exists:suffixes,id',
             'file_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240', // 10MB max
         ], [
 //            'suffix_ids.required' => 'The suffix field is required.',
-            'suffix_ids.array' => 'The suffix field must be a valid array.',
-            'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
+//            'suffix_ids.array' => 'The suffix field must be a valid array.',
+//            'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
             'file_path.required' => 'The file upload is required.',
 
         ]);
@@ -149,12 +151,13 @@ class PaperController extends Controller
     public function update(Request $request, Paper $paper): RedirectResponse
     {
 
+//        dd($request);
         $data = $request->validate([
             'name' => 'required|string',
             'year_id' => 'integer|string',
             'grade_id' => 'sometimes|required|integer',
             'term_id' => 'sometimes|required|integer',
-            'syllabus_id' => 'sometimes|required|integer',
+            'syllabus_id' => 'nullable|integer',
             'question_count' => 'required|integer',
             'type_id' => 'required|integer',
             'province_id' => 'sometimes|required|integer',
@@ -164,11 +167,11 @@ class PaperController extends Controller
             'medium_id' => 'required|integer',
             'subject_id' => 'required|integer',
             'suffix_ids' => 'nullable|array',
-            'suffix_ids.*' => 'exists:suffixes,id',
+//            'suffix_ids.*' => 'exists:suffixes,id',
         ],[
 //            'suffix_ids.required' => 'The suffix field is required.',
-            'suffix_ids.array' => 'The suffix field must be a valid array.',
-            'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
+//            'suffix_ids.array' => 'The suffix field must be a valid array.',
+//            'suffix_ids.*.exists' => 'One or more selected suffixes are invalid.',
         ]);
 
         $data['updated_by'] = auth()->id();

@@ -62,6 +62,14 @@
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
+                        <select id="filter_level" class="form-select">
+                            <option value="">-- All Levels --</option>
+                            @foreach($levels as $level)
+                                <option value="{{ $level->name }}">{{ $level->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
                         <select id="filter_subject" class="form-select">
                             <option value="">-- All Subjects --</option>
                             @foreach($subjects as $subject)
@@ -93,7 +101,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <select id="filter_term" class="form-select">
                             <option value="">-- All Terms --</option>
                             @foreach($terms as $term)
@@ -117,7 +125,7 @@
                     <tr>
                         <th width="5%">ID</th>
                         <th width="50%">Name</th>
-                        <th width="10%">No. of Questions</th>
+                        <th width="12%">No. of Questions</th>
                         <th width="10%">Link</th>
 
                         <th width="10%">Updated On</th>
@@ -136,6 +144,7 @@
                         <th class="d-none">Grade</th>
                         <th class="d-none">Term</th>
                         <th class="d-none">Suffix</th>
+                        <th class="d-none">Level</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -187,6 +196,7 @@
                                     {{ $suffix->name ?? '' }}\
                                 @endforeach
                             </td>
+                            <td class="d-none">{{ $paper->level->name ?? '' }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -216,6 +226,7 @@
 
     <script>
         $(document).ready(function () {
+
             let table = $('#paperTable').DataTable({
                 responsive: true,
                 paging: true,
@@ -223,31 +234,135 @@
                 searching: true,
                 ordering: true,
                 order: [[0, 'desc']],
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search papers..."
-                },
+                language: { search: "_INPUT_", searchPlaceholder: "Search papers..." },
                 columnDefs: [
-                    {targets: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16], visible: false} // Hide extra columns but keep searchable
+                    { targets: [0,3,6,7,8,9,10,11,12,13,14,15,16,17], searchable: false }, // disable search
+                    {targets: [7,8,9,10,11,12,13,14,15,16,17], visible: false}
                 ]
             });
 
-            // Unified filter binding
-            $('#filter_type, #filter_province, #filter_zone, #filter_school, #filter_subject, #filter_medium, #filter_year, #filter_grade, #filter_term, #filter_suffix')
+            // =========================
+            // RESET ALL FILTERS TO DEFAULT
+            // =========================
+            function resetFilters() {
+                $('#filter_province, #filter_zone, #filter_school, #filter_grade, #filter_term, #filter_suffix')
+                    .prop('disabled', false);
+
+                // Show all options again
+                $("#filter_zone option, #filter_school option, #filter_subject option").show();
+            }
+
+            // =========================
+            // HANDLE TYPE CHANGE
+            // =========================
+            // ========== TYPE FILTER HANDLING ==========
+            $('#filter_type').on('change', function () {
+                let val = $(this).val();
+
+                // RESET ALL DROPDOWNS
+                $('#filter_province, #filter_zone, #filter_school, #filter_grade, #filter_term, #filter_suffix, #filter_level, #filter_subject, #filter_medium, #filter_year')
+                    .val('')                      // reset selected value
+                    .prop('disabled', false);     // enable again by default
+
+                // SHOW ALL OPTIONS AGAIN
+                $("#filter_zone option, #filter_school option, #filter_subject option").show();
+
+                // If no type selected → do nothing more
+                if (val === "") return;
+
+                // APPLY DISABLE RULES
+                if (val === "National") {
+                    $('#filter_province, #filter_zone, #filter_school, #filter_grade, #filter_term').prop('disabled', true);
+                }
+                else if (val === "Provincial") {
+                    $('#filter_zone, #filter_school, #filter_suffix').prop('disabled', true);
+                }
+                else if (val === "Zonal") {
+                    $('#filter_school, #filter_suffix').prop('disabled', true);
+                }
+                else if (val === "School") {
+                    $('#filter_zone, #filter_suffix').prop('disabled', true);
+                }
+            });
+
+
+
+            // =========================
+            // PROVINCE → FILTER ZONE & SCHOOL
+            // =========================
+            $('#filter_province').on('change', function () {
+                let selectedProvinceID = $("#filter_province option:selected").data('id');
+
+                // Reset if empty
+                if (!selectedProvinceID) {
+                    $("#filter_zone option, #filter_school option").show();
+                    return;
+                }
+
+                $("#filter_zone option").each(function () {
+                    let zoneProvince = $(this).data('province');
+                    if (zoneProvince != selectedProvinceID && $(this).val() !== "") {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+
+                $("#filter_school option").each(function () {
+                    let schoolProvince = $(this).data('province');
+                    if (schoolProvince != selectedProvinceID && $(this).val() !== "") {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            });
+
+
+            // =========================
+            // LEVEL → FILTER SUBJECTS
+            // =========================
+            $('#filter_level').on('change', function () {
+                let levelID = $("#filter_level option:selected").data("id");
+
+                if (!levelID) {
+                    $("#filter_subject option").show();
+                    return;
+                }
+
+                $("#filter_subject option").each(function () {
+                    let subjectLevel = $(this).data('level');
+                    if (subjectLevel != levelID && $(this).val() !== "") {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
+            });
+
+
+            // =========================
+            // DATATABLE FILTERS
+            // =========================
+            $('#filter_type, #filter_province, #filter_zone, #filter_school, #filter_subject, #filter_medium, #filter_year, #filter_grade, #filter_term, #filter_suffix, #filter_level')
                 .on('change', function () {
-                    table.column(7).search($('#filter_type').val()); //7
-                    table.column(8).search($('#filter_zone').val()); //
+
+                    table.column(7).search($('#filter_type').val());
+                    table.column(8).search($('#filter_zone').val());
                     table.column(9).search($('#filter_subject').val());
                     table.column(10).search($('#filter_school').val());
                     table.column(11).search($('#filter_year').val());
                     table.column(12).search($('#filter_province').val());
-                    table.column(13).search($('#filter_medium').val());   // hidden medium
-                    table.column(14).search($('#filter_grade').val());    // hidden grade
-                    table.column(15).search($('#filter_term').val());     // hidden term
-                    table.column(16).search($('#filter_suffix').val());   // hidden suffix
+                    table.column(13).search($('#filter_medium').val());
+                    table.column(14).search($('#filter_grade').val());
+                    table.column(15).search($('#filter_term').val());
+                    table.column(16).search($('#filter_suffix').val());
+                    table.column(17).search($('#filter_level').val());
+
                     table.draw();
                 });
         });
+
     </script>
 
 @endsection

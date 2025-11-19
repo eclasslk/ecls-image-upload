@@ -234,6 +234,7 @@
                                            class="form-control"
                                            value="{{ old('question_count', $paper->question_count ?? 50) }}"
                                            min="1"
+                                           max="60"
                                            step="1"
                                            inputmode="numeric">
 
@@ -250,9 +251,9 @@
 
                         <!-- Row 6: Name + File Upload -->
                         <div class="row mb-4 align-items-end">
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold text-secondary mb-0">NAME</label>
-                            </div>
+{{--                            <div class="col-md-2">--}}
+{{--                                <label class="form-label fw-bold text-secondary mb-0">NAME</label>--}}
+{{--                            </div>--}}
                             <div class="col-md-6 position-relative">
 
                                 <input type="text" name="name" id="generated_name"
@@ -269,7 +270,7 @@
 
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-5">
                                 <input type="file" name="file_path" class="form-control" accept="application/pdf">
                                 @error('file_path')
                                 <small class="text-danger">{{ $message }}</small>
@@ -313,105 +314,142 @@
             function handleFieldConditions() {
                 const selectedTypeText = $('select[name="type_id"] option:selected').text().trim();
 
-                // Source selects
+                // Fields
                 const $province = $('select[name="province_id"]');
                 const $zone = $('select[name="zone_id"]');
                 const $school = $('select[name="school_id"]');
 
-                // Paper selects
                 const $grade = $('select[name="grade_id"]');
                 const $term = $('select[name="term_id"]');
                 const $syllabus = $('select[name="syllabus_id"]');
 
-                // Reset all to enabled
-                $province.add($zone).add($school).add($grade).add($term).prop('disabled', false);
-                $province.add($zone).add($school).add($grade).add($term)
-                    .closest('.col-md-4, .col-md-3').css('opacity', 1);
+                // Reset all first (enable + full opacity)
+                $province.add($zone).add($school)
+                    .add($grade).add($term).add($syllabus)
+                    .prop("disabled", false)
+                    .closest('.col-md-4, .col-md-3').css("opacity", 1);
 
-                // --- SOURCE CONDITIONS ---
-                if (selectedTypeText === 'National') {
-                    $province.add($zone).add($school).prop('disabled', true);
-                    $province.add($zone).add($school).closest('.col-md-4').css('opacity', 0.5);
+                // ------------------------------------------------------
+                // 1️⃣ NATIONAL
+                // disable: province, zone, school, grade, term
+                // ------------------------------------------------------
+                if (selectedTypeText === "National") {
 
-                    // Disable Grade + Term
-                    $grade.add($term).prop('disabled', true);
-                    $grade.add($term).closest('.col-md-3').css('opacity', 0.5);
-                }
-                else if (selectedTypeText === 'Provincial') {
-                    $province.prop('disabled', false);
-                    $zone.add($school).prop('disabled', true);
-                    $zone.add($school).closest('.col-md-4').css('opacity', 0.5);
-
-                    $zone.add($syllabus).prop('disabled', true);
-                    $zone.add($syllabus).closest('.col-md-4').css('opacity', 0.5);
-                }
-                else if (selectedTypeText === 'Zonal') {
-                    $province.add($zone).prop('disabled', false);
-                    $school.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5);
-                    $syllabus.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5);
-
-                    // $zone.add($syllabus).prop('disabled', true);
-                    // $zone.add($syllabus).closest('.col-md-4').css('opacity', 0.5);
-                }
-                else if (selectedTypeText === 'School') {
-                    $province.add($school).prop('disabled', false);
-                    $zone.prop('disabled', true).closest('.col-md-4').css('opacity', 0.5)
-
-                    $zone.add($syllabus).prop('disabled', true);
-                    $zone.add($syllabus).closest('.col-md-4').css('opacity', 0.5);
+                    $province.add($zone).add($school)
+                        .add($grade).add($term)
+                        .prop("disabled", true)
+                        .closest('.col-md-4, .col-md-3').css("opacity", 0.5);
                 }
 
-                generateName(); // regenerate when conditions change
+                    // ------------------------------------------------------
+                    // 2️⃣ PROVINCIAL
+                    // disable: zone, school, syllabus
+                // ------------------------------------------------------
+                else if (selectedTypeText === "Provincial") {
+
+                    $zone.add($school).add($syllabus)
+                        .prop("disabled", true)
+                        .closest('.col-md-4, .col-md-3').css("opacity", 0.5);
+                }
+
+                    // ------------------------------------------------------
+                    // 3️⃣ ZONAL
+                    // disable: school, syllabus
+                // ------------------------------------------------------
+                else if (selectedTypeText === "Zonal") {
+
+                    $school.add($syllabus)
+                        .prop("disabled", true)
+                        .closest('.col-md-4, .col-md-3').css("opacity", 0.5);
+                }
+
+                    // ------------------------------------------------------
+                    // 4️⃣ SCHOOL
+                    // disable: zone, syllabus
+                // ------------------------------------------------------
+                else if (selectedTypeText === "School") {
+
+                    $zone.add($syllabus)
+                        .prop("disabled", true)
+                        .closest('.col-md-4, .col-md-3').css("opacity", 0.5);
+                }
+
+                generateName(); // refresh name after restrictions apply
             }
+
 
             // Function to auto-generate the name field
             function generateName() {
-                const type = $('select[name="type_id"] option:selected').text().trim();
-                const province = $('select[name="province_id"]:enabled option:selected').text().trim();
-                const provinceCode = $('select[name="province_id"]:enabled option:selected').data('code') || province;
+                function getEnabledSelectValue(name) {
+                    const $sel = $(`select[name="${name}"]:enabled`);
+                    const val = $sel.val();
+                    if (!val) return "";   // ignore empty
+                    return $sel.find("option:selected").text().trim();
+                }
 
-                const zone = $('select[name="zone_id"]:enabled option:selected').text().trim();
-                const school = $('select[name="school_id"]:enabled option:selected').text().trim();
+                function getEnabledSelectCode(name) {
+                    const $sel = $(`select[name="${name}"]:enabled`);
+                    const val = $sel.val();
+                    if (!val) return "";
+                    return $sel.find("option:selected").data("code")
+                        || $sel.find("option:selected").text().trim();
+                }
 
-                const levelCode = $('select[name="level_id"] option:selected').data('code') || $('select[name="level_id"] option:selected').text().trim();
-                const subject = $('select[name="subject_id"] option:selected').text().trim();
-                const mediumCode = $('select[name="medium_id"] option:selected').data('code') || $('select[name="medium_id"] option:selected').text().trim();
-                const year = $('select[name="year_id"] option:selected').text().trim();
+                // SIMPLE safe getters
+                const type = getEnabledSelectValue("type_id");
 
-                const grade = $('select[name="grade_id"]:enabled option:selected').text().trim();
-                const termCode = $('select[name="term_id"]:enabled option:selected').data('code') || $('select[name="term_id"]:enabled option:selected').text().trim();
-                const syllabusCode = $('select[name="syllabus_id"]:enabled option:selected').data('code') || $('select[name="syllabus_id"]:enabled option:selected').text().trim();
+                const province = getEnabledSelectValue("province_id");
+                const provinceCode = getEnabledSelectCode("province_id");
 
-                // Handle multiple suffix selections
+                const zone = getEnabledSelectValue("zone_id");
+                const school = getEnabledSelectValue("school_id");
+
+                const levelCode = getEnabledSelectCode("level_id");
+                const subject = getEnabledSelectValue("subject_id");
+                const mediumCode = getEnabledSelectCode("medium_id");
+                const year = getEnabledSelectValue("year_id");
+
+                const grade = getEnabledSelectValue("grade_id");
+                const termCode = getEnabledSelectCode("term_id");
+                const syllabusCode = getEnabledSelectCode("syllabus_id");
+
+                // Suffixes
                 const suffixes = $('select[name="suffix_ids[]"]').val() || [];
-                const suffixNames = suffixes.map(id => {
-                    return $('select[name="suffix_ids[]"] option[value="'+id+'"]').text().trim();
-                }).join(' ');
+                const suffixNames = suffixes.map(id =>
+                    $(`select[name="suffix_ids[]"] option[value="${id}"]`).text().trim()
+                ).join(' ');
 
-                // Construct name groups
+                // --- BUILD THE NAME (only include selected fields) ---
                 const parts = [];
 
+                // Type
                 if (type) parts.push(type);
-                if (provinceCode || zone || school) {
-                    const group2 = [provinceCode, zone, school].filter(Boolean).join(' ');
-                    if (group2) parts.push(group2);
-                }
+
+                // Province → Zone → School group
+                const group2 = [provinceCode, zone, school]
+                    .filter(v => v && v !== "-- Province --" && v !== "-- Zone --" && v !== "-- School --")
+                    .join(' ');
+                if (group2) parts.push(group2);
+
+                // Level + Subject + Medium
                 const group3 = [levelCode, subject, mediumCode].filter(Boolean).join(' ');
                 if (group3) parts.push(group3);
 
+                // Year + Grade + Term + Syllabus
                 const group4 = [year, grade, termCode, syllabusCode].filter(Boolean).join(' ');
                 if (group4) parts.push(group4);
 
+                // Suffix
                 if (suffixNames) parts.push(suffixNames);
 
+                // Final string
                 const generated = parts.join('_').replace(/\s+/g, ' ').trim();
 
                 $('#generated_name').val(generated);
 
-
                 checkDuplicateName(generated);
-
             }
+
 
             // Add listeners for all relevant dropdowns
             $('select').on('change', function() {
@@ -562,6 +600,25 @@
         $('#question_count_select').on('change', function () {
             let val = $(this).val();
             $('#question_count_input').val(val);
+        });
+
+        $('#question_count_input').on('input', function () {
+            let val = parseInt($(this).val());
+
+            // force max 60
+            if (val > 60) {
+                $(this).val(60);
+                val = 60;
+            }
+
+            let select = $('#question_count_select');
+
+            // Sync dropdown
+            if (select.find(`option[value="${val}"]`).length > 0) {
+                select.val(val);
+            } else {
+                select.val('');
+            }
         });
 
         // When input changes -> update select
