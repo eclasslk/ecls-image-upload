@@ -254,7 +254,7 @@
 {{--                            <div class="col-md-2">--}}
 {{--                                <label class="form-label fw-bold text-secondary mb-0">NAME</label>--}}
 {{--                            </div>--}}
-                            <div class="col-md-6 position-relative">
+                            <div class="col-md-5 position-relative">
 
                                 <input type="text" name="name" id="generated_name"
                                        class="form-control"
@@ -270,7 +270,7 @@
 
                             </div>
 
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <input type="file" name="file_path" class="form-control" accept="application/pdf">
                                 @error('file_path')
                                 <small class="text-danger">{{ $message }}</small>
@@ -524,6 +524,28 @@
             });
         });
 
+        const allGrades = @json($grades);
+
+        // ========== LEVEL → FILTER GRADES ==========
+        $('select[name="level_id"]').on('change', function () {
+
+            let selectedLevel = $(this).val();
+            let gradeSelect = $('select[name="grade_id"]');
+
+            // Reset grade dropdown
+            gradeSelect.empty().append('<option value="">-- Grade --</option>');
+
+            if (!selectedLevel) return;
+
+            // Filter grades by level_id
+            let filteredGrades = allGrades.filter(g => g.level_id == selectedLevel);
+
+            filteredGrades.forEach(grade => {
+                gradeSelect.append(
+                    `<option value="${grade.id}">${grade.grade}</option>`
+                );
+            });
+        });
 
         function checkDuplicateName(name) {
             $.ajax({

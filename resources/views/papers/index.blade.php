@@ -41,7 +41,10 @@
                         <select id="filter_province" class="form-select">
                             <option value="">-- All Provinces --</option>
                             @foreach($provinces as $province)
-                                <option value="{{ $province->name }}">{{ $province->name }}</option>
+                                <option value="{{ $province->name }}"
+                                        data-id="{{ $province->id }}">
+                                    {{ $province->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -49,7 +52,11 @@
                         <select id="filter_zone" class="form-select">
                             <option value="">-- All Zones --</option>
                             @foreach($zones as $zone)
-                                <option value="{{ $zone->name }}">{{ $zone->name }}</option>
+                                <option value="{{ $zone->name }}"
+                                        data-id="{{ $zone->id }}"
+                                        data-province="{{ $zone->province_id }}">
+                                    {{ $zone->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -57,7 +64,11 @@
                         <select id="filter_school" class="form-select">
                             <option value="">-- All Schools --</option>
                             @foreach($schools as $school)
-                                <option value="{{ $school->name }}">{{ $school->name }}</option>
+                                <option value="{{ $school->name }}"
+                                        data-id="{{ $school->id }}"
+                                        data-province="{{ $school->province_id }}">
+                                    {{ $school->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -65,7 +76,10 @@
                         <select id="filter_level" class="form-select">
                             <option value="">-- All Levels --</option>
                             @foreach($levels as $level)
-                                <option value="{{ $level->name }}">{{ $level->name }}</option>
+                                <option value="{{ $level->name }}"
+                                        data-id="{{ $level->id }}">
+                                    {{ $level->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -73,7 +87,10 @@
                         <select id="filter_subject" class="form-select">
                             <option value="">-- All Subjects --</option>
                             @foreach($subjects as $subject)
-                                <option value="{{ $subject->name }}">{{ $subject->name }}</option>
+                                <option value="{{ $subject->name }}"
+                                        data-level="{{ $subject->level_id }}">
+                                    {{ $subject->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -97,7 +114,10 @@
                         <select id="filter_grade" class="form-select">
                             <option value="">-- All Grades --</option>
                             @foreach($grades as $grade)
-                                <option value="{{ $grade->grade }}">{{ $grade->grade }}</option>
+                                <option value="{{ $grade->grade }}"
+                                        data-level="{{ $grade->level_id }}">
+                                    {{ $grade->grade }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -236,7 +256,7 @@
                 order: [[0, 'desc']],
                 language: { search: "_INPUT_", searchPlaceholder: "Search papers..." },
                 columnDefs: [
-                    { targets: [0,3,6,7,8,9,10,11,12,13,14,15,16,17], searchable: false }, // disable search
+                    // { targets: [3,6,7,8,9,10,11,12,13,14,15,16,17], searchable: false }, // disable search
                     {targets: [7,8,9,10,11,12,13,14,15,16,17], visible: false}
                 ]
             });
@@ -361,6 +381,58 @@
 
                     table.draw();
                 });
+        });
+
+        $('#filter_province').on('change', function () {
+            let selectedProvinceID = $("#filter_province option:selected").data('id');
+
+            // Reset all first
+            $("#filter_zone option, #filter_school option").show();
+
+            // If empty → show all
+            if (!selectedProvinceID) return;
+
+            // Filter Zones
+            $("#filter_zone option").each(function () {
+                let zoneProvince = $(this).data('province');
+                if (zoneProvince != selectedProvinceID && $(this).val() !== "") {
+                    $(this).hide();
+                }
+            });
+
+            // Filter Schools
+            $("#filter_school option").each(function () {
+                let schoolProvince = $(this).data('province');
+                if (schoolProvince != selectedProvinceID && $(this).val() !== "") {
+                    $(this).hide();
+                }
+            });
+        });
+
+        $('#filter_level').on('change', function () {
+            let levelID = $("#filter_level option:selected").data('id');
+
+            // Reset all first
+            $("#filter_subject option, #filter_grade option").show();
+
+            // If empty → show all
+            if (!levelID) return;
+
+            // Filter Subjects
+            $("#filter_subject option").each(function () {
+                let subjectLevel = $(this).data('level');
+                if (subjectLevel != levelID && $(this).val() !== "") {
+                    $(this).hide();
+                }
+            });
+
+            // Filter Grades
+            $("#filter_grade option").each(function () {
+                let gradeLevel = $(this).data('level');
+                if (gradeLevel != levelID && $(this).val() !== "") {
+                    $(this).hide();
+                }
+            });
         });
 
     </script>

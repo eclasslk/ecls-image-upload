@@ -19,6 +19,10 @@ class LevelSeeder extends Seeder
                 'name' => 'Ordinary Level',
                 'code' => 'OL',
             ],
+            [
+                'name' => 'Primary',
+                'code' => 'Pri',
+            ],
 
         ];
 
