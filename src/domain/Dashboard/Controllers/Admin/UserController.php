@@ -71,7 +71,7 @@ class UserController extends Controller
         }
 
 
-        return redirect()->route('admin.users.index')->with('success','User created!');
+        return redirect()->route('admin.users.index')->with('success','User added successfully!');
     }
 
     public function show(User $user):View
@@ -95,7 +95,7 @@ class UserController extends Controller
         $user->update($data);
 
 
-        return redirect()->route('admin.users.index')->with('success','User updated!');
+        return redirect()->route('admin.users.index')->with('success','User updated successfully!');
     }
 
     public function destroy(User $user): RedirectResponse
@@ -104,7 +104,7 @@ class UserController extends Controller
             $user->delete();
 
             return redirect()->route('admin.users.index')
-                ->with('success', 'User deleted successfully.');
+                ->with('success', 'User deleted successfully!');
         } catch (QueryException $e) {
             // SQLSTATE[23000] = Integrity constraint violation
             if ($e->getCode() === '23000') {

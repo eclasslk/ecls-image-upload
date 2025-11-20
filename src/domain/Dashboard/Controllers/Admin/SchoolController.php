@@ -45,7 +45,7 @@ class SchoolController extends Controller
 
         School::create($data);
 
-        return redirect()->route('admin.schools.index')->with('success','School created!');
+        return redirect()->route('admin.schools.index')->with('success','School added successfully!');
     }
 
     public function show(School $school):View
@@ -69,7 +69,7 @@ class SchoolController extends Controller
         $school->update($data);
 
 
-        return redirect()->route('admin.schools.index')->with('success','School updated!');
+        return redirect()->route('admin.schools.index')->with('success','School updated successfully!');
     }
 
 
@@ -79,7 +79,7 @@ class SchoolController extends Controller
             $school->delete();
 
             return redirect()->route('admin.schools.index')
-                ->with('success', 'School deleted successfully.');
+                ->with('success', 'School deleted successfully!');
         } catch (QueryException $e) {
             // SQLSTATE[23000] = Integrity constraint violation
             if ($e->getCode() === '23000') {

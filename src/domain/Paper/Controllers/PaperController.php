@@ -118,7 +118,7 @@ class PaperController extends Controller
 
         $paper->update(['file_path' => $path]);
 
-        return redirect()->route('papers.index')->with('success', 'Paper created!');
+        return redirect()->route('papers.index')->with('success', 'Paper added successfully!');
     }
 
 
@@ -221,7 +221,7 @@ class PaperController extends Controller
         $paper->update($data);
         $paper->suffixes()->sync($request->suffix_ids ?? []);
 
-        return redirect()->route('papers.index')->with('success', 'Paper update!');
+        return redirect()->route('papers.index')->with('success', 'Paper updated successfully!');
     }
 
 
@@ -237,7 +237,7 @@ class PaperController extends Controller
         $paper->delete();
 
         return redirect()->route('papers.index')
-            ->with('success', 'Paper deleted successfully.');
+            ->with('success', 'Paper deleted successfully!');
     }
 
     public function checkName(Request $request)
