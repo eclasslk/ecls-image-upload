@@ -38,6 +38,7 @@ return new class extends Migration
             $table->foreignIdFor(Medium::class, 'medium_id')->constrained('mediums')->restrictOnDelete();
             $table->foreignIdFor(Subject::class, 'subject_id')->constrained('subjects')->restrictOnDelete();
             $table->foreignIdFor(User::class, 'updated_by')->constrained('users')->restrictOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

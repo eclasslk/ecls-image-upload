@@ -34,7 +34,7 @@ class PaperController extends Controller
         $subjects = Subject::all();
         $mediums = Medium::all();
         $suffixes = SuffixType::all();
-        $years = Year::all();
+        $years = Year::orderBy('year', 'desc')->get();
         $grades = Grade::all();
         $terms = Term::all();
         $syllabuses = Syllabus::all();
@@ -230,8 +230,25 @@ class PaperController extends Controller
     {
         // Delete file if it exists
         if ($paper->file_path && Storage::disk('public')->exists($paper->file_path)) {
-            Storage::disk('public')->delete($paper->file_path);
+
+            // Original path: example => "papers/math.pdf"
+            $originalPath = $paper->file_path;
+
+            // Extract directory + filename + extension
+            $directory = pathinfo($originalPath, PATHINFO_DIRNAME);
+            $filename = pathinfo($originalPath, PATHINFO_FILENAME);
+            $extension = pathinfo($originalPath, PATHINFO_EXTENSION);
+
+            // New file name with "_delete" and unique ID
+            $newFileName = $filename . '_delete_' . uniqid() . '.' . $extension;
+
+            // New path
+            $newFilePath = $directory . '/' . $newFileName;
+
+            // Rename (move) the file
+            Storage::disk('public')->move($originalPath, $newFilePath);
         }
+
 
         // Delete record from DB
         $paper->delete();

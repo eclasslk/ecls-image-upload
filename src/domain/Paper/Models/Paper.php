@@ -19,9 +19,13 @@ use domain\Zone\Models\Zone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Paper extends Model
 {
+
+    use SoftDeletes;
+
     protected $fillable = [
         'year_id',
         'grade_id',

@@ -144,13 +144,13 @@
                     <thead class="table-dark">
                     <tr>
                         <th width="5%">ID</th>
-                        <th width="50%">Name</th>
+                        <th width="40%">Name</th>
                         <th width="12%">No. of Questions</th>
                         <th width="10%">Link</th>
 
                         <th width="10%">Updated On</th>
                         <th width="10%">Updated By</th>
-                        <th width="20%">Action</th>
+                        <th width="10%">Action</th>
 
                         {{-- Hidden filterable columns --}}
                         <th class="d-none">Type</th>
@@ -386,10 +386,14 @@
         $('#filter_province').on('change', function () {
             let selectedProvinceID = $("#filter_province option:selected").data('id');
 
-            // Reset all first
+            // RESET selected values first
+            $('#filter_zone').val('');
+            $('#filter_school').val('');
+
+            // SHOW all options
             $("#filter_zone option, #filter_school option").show();
 
-            // If empty → show all
+            // If empty → do nothing
             if (!selectedProvinceID) return;
 
             // Filter Zones
@@ -409,13 +413,18 @@
             });
         });
 
+
         $('#filter_level').on('change', function () {
             let levelID = $("#filter_level option:selected").data('id');
 
-            // Reset all first
+            // RESET selected values first
+            $('#filter_subject').val('');
+            $('#filter_grade').val('');
+
+            // SHOW all options again
             $("#filter_subject option, #filter_grade option").show();
 
-            // If empty → show all
+            // If empty → do nothing
             if (!levelID) return;
 
             // Filter Subjects
@@ -434,6 +443,7 @@
                 }
             });
         });
+
 
     </script>
 
